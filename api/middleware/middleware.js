@@ -9,18 +9,34 @@ module.exports = {
   restricted
 };
 
-function checkUsernameFree(req, res, next) {
-  res.json({ message: `checkUsernameFree middlesware` })
-  
+async function checkUsernameFree(req, res, next) {
+  try {
+    const users = await User.findBy({ username: req.body.username });
+    if (!users.length) {
+      next();
+    } else if (!req.body.username) {
+      res.status(401).json({
+        message: 'Missing Credentials'
+      })
+    } else {
+      res.status(422).json({
+        message: 'Username Taken'
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
 }
 
 async function checkUsernameExist(req, res, next) {
-  res.json({ message: `checkUsernameExist middlesware` })
-
   try {
     const [user] = await User.findBy({ username: req.body.username })
     if (!user) {
       next({ status: 401, message: 'Invalid credentials' })
+    } else if (!req.body.username || !req.body.password) {
+      res.status(401).json({
+        message: 'username and password required'
+      })
     } else {
       req.user = user
       next()
@@ -31,7 +47,18 @@ async function checkUsernameExist(req, res, next) {
 }
 
 function restricted(req, res, next) {
-  res.json({ message: `restricted middlesware` })
+  const token = req.headers.authorization
+  if (!token) {
+    next({ status: 401, message: 'Token required' })
+  }
+  jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+    if (err) {
+      next({ status: 401, message: 'Token invalid' })
+    } else {
+      req.decodedToken = decodedToken
+      next()
+    }
+  })
 }
 
 

@@ -39,20 +39,20 @@ router.post('/register', checkUsernameFree, (req, res, next) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-  // const { username, password } = req.body
-  // const hash = bcrypt.hashSync(password, 8)
+  const { username, password } = req.body
+  const hash = bcrypt.hashSync(password, 8)
 
-  // User.add({ username, password: hash })
-  //   .then(newUser => {
-  //     res.status(201).json(newUser)
-  //   })
-  //   .catch(err => {
-  //     next(err)
-  //   })
+  User.add({ username, password: hash })
+    .then(newUser => {
+      res.status(201).json(newUser)
+    })
+    .catch(err => {
+      next(err)
+    })
 
 });
 
-router.post('/login', checkUsernameExist, (req, res) => {
+router.post('/login', checkUsernameExist,  (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -76,6 +76,15 @@ router.post('/login', checkUsernameExist, (req, res) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
+  if (bcrypt.compareSync(req.body.password, req.user.password)) {
+    const token = genToken(req.user)
+    res.json({
+      message: `${req.user.username} is back!`,
+      token
+    })
+  } else {
+    next({ status: 401, message: 'Invalid credentials' })
+  }
 
 });
 
