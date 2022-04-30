@@ -6,19 +6,26 @@ module.exports = {
 }
 
 function restricted(req, res, next) {
-    const token = req.headers.authorization
+    const token = req.headers.authorization;
     if (!token) {
-        next({ status: 401, message: 'Token required' })
+        res.status(401).json({
+            message: 'token required'
+        });
+    } else {
+        jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+            if (err) {
+                res.status(401).json({
+                    message: 'token invalid'
+                });
+            } else {
+                req.decodedJwt = decodedToken;
+                next();
+            }
+        })
     }
-    jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
-        if (err) {
-            next({ status: 401, message: 'Token invalid' })
-        } else {
-            req.decodedToken = decodedToken
-            next()
-        }
-    })
 }
+
+
 
 
 /*
