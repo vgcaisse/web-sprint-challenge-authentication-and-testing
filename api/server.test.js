@@ -77,17 +77,3 @@ describe('server handles a register endpoint', () => {
     expect(res.status).toBe(401);
   })
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
