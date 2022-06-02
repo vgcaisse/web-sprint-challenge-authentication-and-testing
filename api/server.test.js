@@ -40,7 +40,7 @@ describe('server handles a register endpoint', () => {
       .post('/api/auth/login')
       .send({ username: 'Peet Sasafras', password: 'foobar' });
 
-    expect(res.body).toMatchObject({ message: 'username and password required' });
+    expect(res.body).toMatchObject({ message: 'Invalid credentials' });
   })
 
   it('[POST] /login should return error message if no username or password is entered', async () => {
