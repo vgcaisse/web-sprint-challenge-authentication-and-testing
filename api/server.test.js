@@ -40,7 +40,7 @@ describe('server handles a register endpoint', () => {
       .post('/api/auth/login')
       .send({ username: 'Peet Sasafras', password: 'foobar' });
 
-    expect(res.body).toMatchObject({ message: 'Invalid credentials' });
+    expect(res.body).toMatchObject({ message: 'username and password required' });
   })
 
   it('[POST] /login should return error message if no username or password is entered', async () => {
@@ -48,7 +48,7 @@ describe('server handles a register endpoint', () => {
       .post('/api/auth/login')
       .send({ username: '', password: '' });
 
-    expect(res.body).toMatchObject({ message: 'Invalid credentials' });
+    expect(res.body).toMatchObject({ message: 'username and password required' });
   })
 
   it('[POST] /login should return error message if no password is entered', async () => {
@@ -56,7 +56,7 @@ describe('server handles a register endpoint', () => {
       .post('/api/auth/login')
       .send({ username: 'Peet Sasafras', password: '' });
 
-    expect(res.body).toMatchObject({ message: 'Invalid credentials' });
+    expect(res.body).toMatchObject({ message: 'username and password required' });
   })
 
   it('[POST] /login should return error message if no username is entered', async () => {
@@ -64,7 +64,7 @@ describe('server handles a register endpoint', () => {
       .post('/api/auth/login')
       .send({ username: '', password: '1234' });
 
-    expect(res.body).toMatchObject({ message: 'Invalid credentials' });
+    expect(res.body).toMatchObject({ message: 'username and password required' });
   })
 
   it('[GET] / does not show jokes ', async () => {
