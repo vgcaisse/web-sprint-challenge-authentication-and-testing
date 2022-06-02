@@ -29,7 +29,7 @@ router.post('/login', checkUsernameExist, (req, res, next) => {
       message: `${req.user.username} is back!`,
       token
     })
-  } else if (!req.user.password || !req.user.password) {
+  } else if (!req.user.password || !req.user.username) {
     res.status(401).json({
       message: 'username and password required'
     })
