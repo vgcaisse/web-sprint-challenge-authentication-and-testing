@@ -1,8 +1,12 @@
 const User = require('../model')
 
+const jwt = require('jsonwebtoken')
+const { JWT_SECRET } = require('../config/index')
+
 module.exports = {
   checkUsernameFree,
   checkUsernameExist,
+  genToken
 };
 
 async function checkUsernameFree(req, res, next) {
@@ -30,7 +34,7 @@ async function checkUsernameExist(req, res, next) {
     if (users.length) {
       req.user = users[0]
       next();
-    } else if (!req.body.username || !req.body.password) {
+    } else if (req.body.username || req.body.password) {
       res.status(401).json({
         message: 'username and password required'
       })
@@ -42,4 +46,15 @@ async function checkUsernameExist(req, res, next) {
   } catch (err) {
     next(err)
   }
+}
+
+function genToken(user) {
+  const payload = {
+    subject: user.id,
+    username: user.username,
+  }
+  const options = {
+    expiresIn: '1d'
+  }
+  return jwt.sign(payload, JWT_SECRET, options)
 }
