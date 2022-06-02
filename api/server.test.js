@@ -18,22 +18,22 @@ describe('user model', () => {
   })
 })
 
-// describe('server handles a register endpoint', () => {
-//   it('[POST] /register ', async () => {
-//     let res = await request(server)
-//       .post('/api/auth/register')
-//       .send({ username: 'Peet Sasafras', password: '1234' });
+describe('server handles a register endpoint', () => {
+  it('[POST] /register ', async () => {
+    let res = await request(server)
+      .post('/api/auth/register')
+      .send({ username: 'Peet Sasafras', password: '1234' });
 
-//     expect(res.status).toBe(201)
-//   })
+    expect(res.status).toBe(201)
+  })
 
-//   it('[POST] /register should show credentials on successful registration ', async () => {
-//     let res = await request(server)
-//       .post('/api/auth/register')
-//       .send({ username: 'Peet Sasafras', password: 'foobar' });
+  it('[POST] /register should show credentials on successful registration ', async () => {
+    let res = await request(server)
+      .post('/api/auth/register')
+      .send({ username: 'Peet Sasafras', password: 'foobar' });
 
-//     expect(res.body).toHaveProperty('username', 'Peet Sasafras');
-//   })
+    expect(res.body).toHaveProperty('username', 'Peet Sasafras');
+  })
 
   it('[POST] /login should return error message on failed login', async () => {
     let res = await request(server)

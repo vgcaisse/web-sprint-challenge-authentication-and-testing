@@ -12,7 +12,7 @@ const {
 
 const User = require('../model')
 
-router.post('/register', checkUsernameFree, checkUsernameExist, (req, res, next) => {
+router.post('/register', checkUsernameFree, (req, res, next) => {
   const { username, password } = req.body
   const hash = bcrypt.hashSync(password, 8)
 
