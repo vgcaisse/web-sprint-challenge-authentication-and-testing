@@ -1,13 +1,10 @@
 const router = require('express').Router();
-
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs');
-
-const { JWT_SECRET } = require('../config/index')
 
 const {
   checkUsernameFree,
   checkUsernameExist,
+  genToken
 } = require('./auth-middleware')
 
 const User = require('../model')
@@ -32,22 +29,16 @@ router.post('/login', checkUsernameExist, (req, res, next) => {
       message: `${req.user.username} is back!`,
       token
     })
+  } else if (!req.user.password || !req.body.password) {
+    res.status(401).json({
+      message: 'username and password required'
+    })
   } else {
     res.status(401).json({ message: `Invalid credentials` })
     next
   }
-
 });
 
-function genToken(user) {
-  const payload = {
-    subject: user.id,
-    username: user.username,
-  }
-  const options = {
-    expiresIn: '1d'
-  }
-  return jwt.sign(payload, JWT_SECRET, options)
-}
+
 
 module.exports = router;
