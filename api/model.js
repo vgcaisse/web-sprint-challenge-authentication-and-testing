@@ -3,7 +3,7 @@ const db = require('../data/dbConfig')
 module.exports = {
     add,
     findBy,
-    findById
+    findById,
 }
 
 async function add(user) {

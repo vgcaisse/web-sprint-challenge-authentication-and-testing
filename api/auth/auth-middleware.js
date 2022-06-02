@@ -11,8 +11,13 @@ module.exports = {
 
 async function checkUsernameFree(req, res, next) {
   try {
-    const users = await User.findBy({ username: req.body.username });
-    if (!req.body.username || !req.body.password) {
+    const { username, password } = req.body
+    const users = await User.findBy({ username: username });
+    if (!username || !password) {
+      res.status(401).json({
+        message: 'username and password required'
+      })
+    } else if (username == null || password == null) {
       res.status(401).json({
         message: 'username and password required'
       })
@@ -30,11 +35,12 @@ async function checkUsernameFree(req, res, next) {
 
 async function checkUsernameExist(req, res, next) {
   try {
-    const users = await User.findBy({ username: req.body.username });
+    const { username, password } = req.body
+    const users = await User.findBy({ username: username });
     if (users.length) {
       req.user = users[0]
       next();
-    } else if (req.body.username || req.body.password) {
+    } else if (!username || !password) {
       res.status(401).json({
         message: 'username and password required'
       })
@@ -44,7 +50,9 @@ async function checkUsernameExist(req, res, next) {
       })
     }
   } catch (err) {
-    next(err)
+    res.status(401).json({
+      message: 'username and password required'
+    })
   }
 }
 
