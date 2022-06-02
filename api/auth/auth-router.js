@@ -28,12 +28,12 @@ router.post('/register', checkUsernameFree, (req, res, next) => {
 router.post('/login', checkUsernameExist, (req, res, next) => {
   if (bcrypt.compareSync(req.body.password, req.user.password)) {
     const token = genToken(req.user)
-    res.status(200).json({
+    res.json({
       message: `${req.user.username} is back!`,
       token
     })
   } else {
-    res.status(401).json({ message: `username and password required` })
+    res.status(401).json({ message: `invalid creds` })
     next
   }
 
