@@ -28,7 +28,7 @@ router.post('/register', checkUsernameFree, (req, res, next) => {
 router.post('/login', checkUsernameExist, (req, res, next) => {
   if (bcrypt.compareSync(req.body.password, req.user.password)) {
     const token = genToken(req.user)
-    res.json({
+    res.status(200).json({
       message: `${req.user.username} is back!`,
       token
     })
