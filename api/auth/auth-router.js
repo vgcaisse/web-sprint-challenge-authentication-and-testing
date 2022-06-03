@@ -1,44 +1,42 @@
-const router = require('express').Router();
-const bcrypt = require('bcryptjs');
-
+const bcrypt = require("bcryptjs/dist/bcrypt");
+const router = require("express").Router();
+const User = require("../users/users-model.js");
 const {
-  checkUsernameFree,
-  checkUsernameExist,
-  genToken
-} = require('./auth-middleware')
+  checkUserData,
+  checkUsernameExists,
+  checkUsernameNotTaken,
+  checkPassword,
+} = require("../middleware/auth");
 
-const User = require('../model')
-
-router.post('/register', checkUsernameFree, (req, res, next) => {
-  const { username, password } = req.body
-  const hash = bcrypt.hashSync(password, 8)
-
-  User.add({ username, password: hash })
-    .then(newUser => {
-      res.status(201).json(newUser)
-    })
-    .catch(err => {
-      next(err)
-    })
-});
-
-router.post('/login', checkUsernameExist, (req, res, next) => {
-  if (bcrypt.compareSync(req.body.password, req.user.password)) {
-    const token = genToken(req.user)
-    res.status(200).json({
-      message: `${req.user.username} is back!`,
-      token
-    })
-  } else if (!req.user.password || !req.user.username) {
-    res.status(401).json({
-      message: 'username and password required'
-    })
-  } else {
-    res.status(401).json({ message: `Invalid credentials` })
-    next
+router.post(
+  "/register",
+  checkUserData,
+  checkUsernameNotTaken,
+  (req, res, next) => {
+    const { username, password } = req.userData;
+    const hash = bcrypt.hashSync(password, 8);
+    User.add({ username, password: hash })
+      .then((newUser) => {
+        res.status(201).json(newUser);
+      })
+      .catch(next);
   }
-});
+);
 
-
+router.post(
+  "/login",
+  checkUserData,
+  checkUsernameExists,
+  checkPassword,
+  (req, res, next) => {
+    if (req.user && req.token) {
+      res
+        .status(200)
+        .send({ message: `welcome, ${req.user.username}`, token: req.token });
+    } else {
+      next({ status: 500 });
+    }
+  }
+);
 
 module.exports = router;
